@@ -1,4 +1,15 @@
+CREATE DATABASE movies_database;
+
+-- Переключимся на созданную БД
+\connect movies_database
+
 CREATE SCHEMA IF NOT EXISTS content;
+
+
+
+
+
+
 
 -- Создание таблиц
 
@@ -25,7 +36,40 @@ CREATE TABLE IF NOT EXISTS content.person_film_work (
     film_work_id uuid NOT NULL,
     person_id uuid NOT NULL,
     role TEXT NOT NULL,
-    created timestamp with time zone
+    created timestamp with time zone,
+
+    CONSTRAINT fk_film_work
+    FOREIGN KEY(film_work_id)
+    REFERENCES content.film_work(id)
+    ON DELETE CASCADE,
+    CONSTRAINT fk_person
+    FOREIGN KEY(person_id)
+    REFERENCES content.person(id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS content.genre (
+    id uuid PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    created timestamp with time zone,
+    modified timestamp with time zone
+);
+
+CREATE TABLE IF NOT EXISTS content.genre_film_work (
+    id uuid PRIMARY KEY,
+    genre_id uuid NOT NULL,
+    film_work_id uuid NOT NULL,
+    created timestamp with time zone,
+
+    CONSTRAINT fk_genre
+    FOREIGN KEY(genre_id)
+    REFERENCES content.genre(id)
+    ON DELETE CASCADE,
+    CONSTRAINT fk_film_work
+    FOREIGN KEY(film_work_id)
+    REFERENCES content.film_work(id)
+    ON DELETE CASCADE
 );
 
 -- Создание индексов
