@@ -1,2 +1,6 @@
 .DS_Store
 movies_admin/venv/
+*.env
+*__pycache__/
+*.idea/
+*.sqlfluff
