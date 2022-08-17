@@ -5,12 +5,6 @@ CREATE DATABASE movies_database;
 
 CREATE SCHEMA IF NOT EXISTS content;
 
-
-
-
-
-
-
 -- Создание таблиц
 
 CREATE TABLE IF NOT EXISTS content.film_work (
@@ -75,4 +69,6 @@ CREATE TABLE IF NOT EXISTS content.genre_film_work (
 -- Создание индексов
 
 CREATE INDEX film_work_creation_date_idx ON content.film_work(creation_date);
-CREATE UNIQUE INDEX film_work_person_idx ON content.person_film_work (film_work_id, person_id);
+CREATE INDEX film_work_title_idx ON content.film_work(title)
+CREATE INDEX person_full_name_idx ON content.person(full_name)
+CREATE UNIQUE INDEX film_work_person_idx ON content.person_film_work (film_work_id, person_id, role);
