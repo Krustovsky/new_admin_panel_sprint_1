@@ -22,8 +22,6 @@ class GenreAdmin(admin.ModelAdmin):
 
 
 @admin.register(Filmwork)
-
-
 class FilmWorkAdmin(admin.ModelAdmin):
     inlines = (GenreFilmworkInline, PersonFilmworkInline)
 
