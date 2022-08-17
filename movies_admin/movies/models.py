@@ -2,11 +2,10 @@ from django.db import models
 
 import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
+
 from django.utils.translation import gettext_lazy as _
 
 
-#Mixin
 class TimeStampedMixin(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -22,10 +21,6 @@ class UUIDMixin(models.Model):
         abstract = True
 
 
-#####################
-#Tables
-#####################
-
 class Genre(UUIDMixin, TimeStampedMixin):
     name = models.CharField(_('name'), max_length=255)
     description = models.TextField(_('description'), blank=True)
@@ -37,6 +32,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
         db_table = "content\".\"genre"
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
+
 
 class Person(UUIDMixin, TimeStampedMixin):
     full_name = models.CharField(_('Full name'), max_length=255)
@@ -77,13 +73,12 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         verbose_name_plural = _('Movies')
 
 
-
 class GenreFilmwork(UUIDMixin):
     film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
-    genre = models.ForeignKey('Genre', on_delete=models.CASCADE, verbose_name= _('Genre'))
+    genre = models.ForeignKey('Genre', on_delete=models.CASCADE, verbose_name=_('Genre'))
     created = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self): #чтобы не было строки с названием объекта TabularInline, как правильно незнаю
+    def __str__(self):  # Чтобы не было строки с названием объекта TabularInline, как правильно незнаю
         return ''
 
     class Meta:
@@ -93,7 +88,7 @@ class GenreFilmwork(UUIDMixin):
 
 
 class PersonFilmwork(UUIDMixin):
-    
+
     class RoleType(models.TextChoices):
         ACTOR = 'actor', _('actor')
         DIRECTOR = 'director', _('director')
@@ -104,7 +99,6 @@ class PersonFilmwork(UUIDMixin):
     person = models.ForeignKey('Person', on_delete=models.CASCADE,  verbose_name=_('Star'))
     role = models.TextField(_('role'), null=True, choices=RoleType.choices)
     created = models.DateTimeField(auto_now_add=True)
-
 
     class Meta:
         db_table = "content\".\"person_film_work"
