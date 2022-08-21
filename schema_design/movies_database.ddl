@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS content.genre_film_work (
 -- Создание индексов
 
 CREATE INDEX film_work_creation_date_idx ON content.film_work(creation_date);
-CREATE INDEX film_work_title_idx ON content.film_work(title)
-CREATE INDEX person_full_name_idx ON content.person(full_name)
+CREATE INDEX film_work_title_idx ON content.film_work(title);
+CREATE INDEX person_full_name_idx ON content.person(full_name);
 CREATE UNIQUE INDEX film_work_person_role_idx ON content.person_film_work (film_work_id, person_id, role);
-CREATE UNIQUE INDEX film_work_genre_idx ON content.genre (film_work_id, genre);
+CREATE UNIQUE INDEX film_work_genre_idx ON content.genre_film_work (film_work_id, genre_id);
