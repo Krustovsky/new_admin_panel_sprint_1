@@ -25,13 +25,33 @@ class GenreAdmin(admin.ModelAdmin):
 class FilmWorkAdmin(admin.ModelAdmin):
     inlines = (GenreFilmworkInline, PersonFilmworkInline)
 
-    list_display = ('title', 'type', 'creation_date', 'rating',)
+    list_display = ('title',
+                    'type',
+                    'get_genres',
+                    'creation_date',
+                    'rating',
+                    )
+
+    list_prefetch_related = ('genres',)
 
     # Фильтрация в списке
-    list_filter = ('type',)
+    list_filter = ('type', 'genres')
 
     # Поиск по полям
     search_fields = ('title', 'description', 'person')
+
+    def get_queryset(self, request):
+        queryset = (
+            super()
+            .get_queryset(request)
+            .prefetch_related(*self.list_prefetch_related)
+        )
+        return queryset
+
+    def get_genres(self, obj):
+        return ', '.join([genre.name for genre in obj.genres.all()])
+
+    get_genres.short_description = 'Жанры фильма'
 
 
 @admin.register(Person)

@@ -1,12 +1,27 @@
 """Основной модель для проверки соответствия данных между SQLite и Postgres."""
 import contextlib
 import sqlite3
+import os
 
 import psycopg2
 from postgres_check import PostgresChecker
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 from sqlite_check import SQLiteChecker
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+@contextlib.contextmanager
+def sqlite3_open_connect(db_path: str):
+    conn = sqlite3.connect(db_path)
+    try:
+        yield conn
+    finally:
+        conn.commit()
+        conn.close()
 
 
 def data_compare_sqlite_to_pg(connection: sqlite3.Connection, pg_conn: _connection):
@@ -42,8 +57,12 @@ def data_compare_sqlite_to_pg(connection: sqlite3.Connection, pg_conn: _connecti
 
 
 if __name__ == '__main__':
-    dsl = {'dbname': 'movies_database', 'user': 'app', 'password': '123qwe', 'host': '192.168.1.23', 'port': 5432}
-    db_path = '.././sqlite_to_postgres/db.sqlite'
-    with sqlite3.connect(db_path) as sqlite_conn:
+    dsl = {'dbname': os.environ.get('DB_NAME'),
+           'user': os.environ.get('DB_USER'),
+           'password': os.environ.get('DB_PASSWORD'),
+           'host': os.environ.get('DB_HOST'),
+           'port': os.environ.get('DB_PORT')}
+    db_path = os.environ.get('DB_SQLITE_PATH')
+    with sqlite3_open_connect(db_path) as sqlite_conn:
         with contextlib.closing(psycopg2.connect(**dsl, cursor_factory=DictCursor)) as pg_conn:
             data_compare_sqlite_to_pg(sqlite_conn, pg_conn)

@@ -23,7 +23,7 @@ class UUIDMixin(models.Model):
 
 class Genre(UUIDMixin, TimeStampedMixin):
     name = models.CharField(_('name'), max_length=255)
-    description = models.TextField(_('description'), blank=True)
+    description = models.TextField(_('description'), null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -52,9 +52,9 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         TV_SHOW = 'tv_show', _('tv_show')
 
     title = models.CharField(_('title'), max_length=255)
-    description = models.TextField(_('description'), blank=True)
-    creation_date = models.DateField(_('creation date'), blank=True)
-    rating = models.FloatField(_('rating'), blank=True,
+    description = models.TextField(_('description'), null=True, blank=True)
+    creation_date = models.DateField(_('creation date'), null=True, blank=True)
+    rating = models.FloatField(_('rating'), null=True, blank=True,
                                validators=[MinValueValidator(0),
                                            MaxValueValidator(100)]
                                )
@@ -74,8 +74,8 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 
 
 class GenreFilmwork(UUIDMixin):
-    film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
-    genre = models.ForeignKey('Genre', on_delete=models.CASCADE, verbose_name=_('Genre'))
+    film_work = models.ForeignKey(Filmwork, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, verbose_name=_('Genre'))
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):  # Чтобы не было строки с названием объекта TabularInline, как правильно незнаю
@@ -85,6 +85,9 @@ class GenreFilmwork(UUIDMixin):
         db_table = "content\".\"genre_film_work"
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
+        constraints = [
+            models.UniqueConstraint(fields=['film_work_id', 'genre_id'], name='film_work_person_role_idx')
+        ]
 
 
 class PersonFilmwork(UUIDMixin):
@@ -95,8 +98,8 @@ class PersonFilmwork(UUIDMixin):
         PRODUCER = 'producer', _('producer')
         WRITER = 'writer', _('writer')
 
-    film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
-    person = models.ForeignKey('Person', on_delete=models.CASCADE,  verbose_name=_('Star'))
+    film_work = models.ForeignKey(Filmwork, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_('Star'))
     role = models.TextField(_('role'), null=True, choices=RoleType.choices)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -104,3 +107,6 @@ class PersonFilmwork(UUIDMixin):
         db_table = "content\".\"person_film_work"
         verbose_name = _('Star')
         verbose_name_plural = _('Stars')
+        constraints = [
+            models.UniqueConstraint(fields=['film_work_id', 'person_id', 'role'], name='film_work_person_idx')
+        ]
