@@ -8,6 +8,7 @@ class SQLiteLoader:
 
         Args:
             connection (sqlite3.Connection): коннект к SQLite
+            fetch_size (int): размер одного запроса в БД
         """
         self.connection: sqlite3.Connection = connection
         self.connection.row_factory = sqlite3.Row
@@ -18,7 +19,7 @@ class SQLiteLoader:
         """Загрузка данных из таблицы film_work.
 
         Returns:
-            fetchall(): Массив sqlite3.Row
+            results: Массив sqlite3.Row (генератор)
         """
         self.curs.execute('SELECT id, title, description, '
                           'creation_date, rating, type, created_at as created, '
@@ -35,7 +36,7 @@ class SQLiteLoader:
         """Загрузка данных из таблицы person.
 
         Returns:
-            fetchall(): Массив sqlite3.Row
+            results: Массив sqlite3.Row (генератор)
         """
         self.curs.execute('SELECT id, full_name, created_at as created, updated_at as modified FROM person;')
 
@@ -49,7 +50,7 @@ class SQLiteLoader:
         """Загрузка данных из таблицы genre.
 
         Returns:
-            fetchall(): Массив sqlite3.Row
+            results: Массив sqlite3.Row (генератор)
         """
         self.curs.execute('SELECT id, name, description, created_at as created, updated_at as modified FROM genre;')
 
@@ -63,7 +64,7 @@ class SQLiteLoader:
         """Загрузка данных из таблицы person_film_work.
 
         Returns:
-            fetchall(): Массив sqlite3.Row
+            results: Массив sqlite3.Row (генератор)
         """
         self.curs.execute('SELECT id, film_work_id, person_id, role, created_at as created FROM person_film_work;')
 
@@ -77,7 +78,7 @@ class SQLiteLoader:
         """Загрузка данных из таблицы genre_film_work.
 
         Returns:
-            fetchall(): Массив sqlite3.Row
+            results: Массив sqlite3.Row (генератор)
         """
         self.curs.execute('SELECT id, film_work_id, genre_id, created_at as created FROM genre_film_work;')
 
