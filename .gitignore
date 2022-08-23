@@ -1,5 +1,5 @@
 .DS_Store
-movies_admin/venv/
+*venv/
 *.env
 *__pycache__/
 *.idea/

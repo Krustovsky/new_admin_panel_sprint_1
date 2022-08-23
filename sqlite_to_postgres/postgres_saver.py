@@ -22,69 +22,31 @@ class PostgresSaver:
             self.schema: str = '{0}.'.format(schema)
         else:
             self.schema = schema
+        self.tables = {'film_work': FilmWork,
+                       'person': Person,
+                       'genre': Genre,
+                       'person_film_work': PersonFilmWork,
+                       'genre_film_work': GenreFilmWork
+                       }
 
-    def save_film_work(self, data_to_save: list):
+    ['film_work', 'genre_film_work', 'person_film_work', 'genre', 'person']
+
+    def save_data(self, loaded_data: list, table: str):
         """Сохранение данных в таблицу Postgres film_work.
 
         Args:
-            data_to_save: массив данных для загрузки
+            loaded_data: данные для загрузки (генератор)
+            table: имя таблицы в которую грузим данные
         """
-        table = 'film_work'
-        data_class = FilmWork
-        data_to_save = [astuple(data_class(**dict(_))) for _ in data_to_save]
-        query = self.__table_query(self.schema, table, data_class)
-        execute_batch(self.cur, query, data_to_save, page_size=self.page_size)
-        self.conn.commit()
+        if table not in ['film_work', 'genre_film_work', 'person_film_work', 'genre', 'person']:
+            raise Exception('Не указана теблица или такой таблицы нет в списке'
+                            'film_work, genre_film_work, person_film_work, genre, person')
 
-    def save_persons(self, data_to_save: list):
-        """Сохранение данных в таблицу Postgres person.
-
-        Args:
-            data_to_save: массив данных для загрузки
-        """
-        table = 'person'
-        data_class = Person
-        data_to_save = [astuple(data_class(**dict(_))) for _ in data_to_save]
-        query = self.__table_query(self.schema, table, data_class)
-        execute_batch(self.cur, query, data_to_save, page_size=self.page_size)
-        self.conn.commit()
-
-    def save_genre(self, data_to_save: list):
-        """Сохранение данных в таблицу Postgres genre.
-
-        Args:
-            data_to_save: массив данных для загрузки
-        """
-        table = 'genre'
-        data_class = Genre
-        data_to_save = [astuple(data_class(**dict(_))) for _ in data_to_save]
-        query = self.__table_query(self.schema, table, data_class)
-        execute_batch(self.cur, query, data_to_save, page_size=self.page_size)
-        self.conn.commit()
-
-    def save_person_film_work(self, data_to_save: list):
-        """Сохранение данных в таблицу Postgres person_film_work.
-
-        Args:
-            data_to_save: массив данных для загрузки
-        """
-        table = 'person_film_work'
-        data_class = PersonFilmWork
-        data_to_save = [astuple(data_class(**dict(_))) for _ in data_to_save]
-        query = self.__table_query(self.schema, table, data_class)
-        execute_batch(self.cur, query, data_to_save, page_size=self.page_size)
-        self.conn.commit()
-
-    def save_genre_film_work(self, data_to_save: list):
-        """Сохранение данных в таблицу Postgres genre_film_workk.
-
-        Args:
-            data_to_save: массив данных для загрузки
-        """
-        table = 'genre_film_work'
-        data_class = GenreFilmWork
-        data_to_save = [astuple(data_class(**dict(_))) for _ in data_to_save]
-        query = self.__table_query(self.schema, table, data_class)
+        data_class = self.tables[table]
+        data_to_save = []
+        for row_batch in loaded_data:
+            data_to_save += [astuple(data_class(**dict(_))) for _ in row_batch]
+        query = self._table_query(self.schema, table, data_class)
         execute_batch(self.cur, query, data_to_save, page_size=self.page_size)
         self.conn.commit()
 
