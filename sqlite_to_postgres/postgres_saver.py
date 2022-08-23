@@ -32,11 +32,11 @@ class PostgresSaver:
     ['film_work', 'genre_film_work', 'person_film_work', 'genre', 'person']
 
     def save_data(self, loaded_data: list, table: str):
-        """Сохранение данных в таблицу Postgres film_work.
+        """Сохранение данных в таблицу Postgres.
 
         Args:
             loaded_data: данные для загрузки (генератор)
-            table: имя таблицы в которую грузим данные
+            table (str): имя таблицы в которую грузим данные
         """
         if table not in ['film_work', 'genre_film_work', 'person_film_work', 'genre', 'person']:
             raise Exception('Не указана теблица или такой таблицы нет в списке'
