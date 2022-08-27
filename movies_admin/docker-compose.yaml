@@ -3,13 +3,9 @@ services:
   backend:
     build:
       context: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
     ports:
       # Перенаправляем запросы, поступающие к localhost:8010 на порт 8010. 
       - 8000:8000
-  neighbour:
-    # Если сервис основан на одном из готовых образов, используйте параметр image вместо build 
-    image: curlimages/curl:latest
-    # Укажем целью контейнера команду curl. С параметром -s в консоль выведется тело html-страницы.
-    entrypoint: ["curl", "-s", "moviesadmin_backend_1:8000"]    
-    # Сервис должен запуститься только после того, как backend будет готов принимать запросы   
-    restart: always 

@@ -1,11 +1,9 @@
 """Django settings for config project."""
 
 import os
-
-from dotenv import load_dotenv
-
 from pathlib import Path
 
+from dotenv import load_dotenv
 from split_settings.tools import include
 
 load_dotenv()
@@ -21,8 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-
-DEBUG = os.environ.get('DEBUG', False) == 'False'
+DEBUG = os.environ.get('DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = ['*']
 
